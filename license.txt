@@ -3,4 +3,4 @@ public domain and you can do as you wish with it.
 
 Visit the website for documentation and download:
 
-https://www.rgraph.net/sqliteeditor
+https://www.rgraph.net/sqliteeditor 
