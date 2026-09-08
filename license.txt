@@ -1,6 +1,15 @@
-SQLite Editor for PHP uses the same license as SQLite itself - ie it's released to the
-public domain and you can do as you wish with it.
+SQLite Editor for PHP
+=====================
+
+SQLite Editor for PHP uses the same license as SQLite itself - ie
+it's released to the public domain and you can do as you wish with
+it.
+
+Extract the contents of this archive to a directory on your website,
+and it should work out-of-the-box.
 
 Visit the website for documentation and download:
 
 https://www.rgraph.net/sqliteeditor
+
+© Richard Heyes 2026
