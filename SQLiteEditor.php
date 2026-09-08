@@ -1357,7 +1357,7 @@ echo '
     editor_objects["' . $this->id . '"].editor_showsearchhelp = function ()
     {
         editor_objects["' . $this->id . '"].editor_modal.show(`
-<div style="font-size: 12pt">
+<div style="font-size: 12pt; height: 80vh">
     <div style="margin-bottom: 10px; margin-top: 10px">
         <b><big style="margin-bottom: 10px">Search help</big></b>
     </div>
@@ -1426,8 +1426,10 @@ echo '
         <tr><td valign="top"><i>ja[^chdrt]k</i></td><td>Search for rows that contain the given word where the third character MUST NOT be <i>c</i>,<i>h</i>,<i>d</i>,<i>r</i> or <i>t</i></td></tr>
     </table>
     
+    <br /><br />
+    
 </div>`, {
-    className: "editor-search-help"
+    className: "editor-search-help",
 });
     };
 
