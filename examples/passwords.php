@@ -16,23 +16,33 @@
     //
     function showPasswordDialog (id)
     {
-        var rows = document.querySelectorAll('div.editor table tr');
+        //
+        // Get all of the (on-screen) data
+        //
+        var data = editor_getdata();
 
-        for (var i=0; i<rows.length; ++i) {
-            if (rows[i].querySelector('input[type=radio]') && rows[i].querySelector('input[type=radio]').checked) {
-                var row = rows[i];
-                var tds = row.querySelectorAll('td');
-                
-                for (var j=0; j<tds.length; ++j) {
-                    if (tds[j].getAttribute('data-column-name') === 'forename') {
-                        var forename = tds[j].getAttribute('data-original');
-                    }
-                }
+        //
+        // Loop through it
+        //
+        for (var i=0; i<data.length; ++i) {
+            if (data[i][0] == id) { // DOUBLE EQUALS!!
+                row = data[i];
+                break;
             }
         }
+        
+        //
+        // Pull out the forename and surname
+        //
+        var forename = row[1];
+        var surname  = row[2];
 
+        //
+        // Show the dialog that allows the user to enter a new
+        // password.
+        //
         editor_modal.show(`
-            <p>Change password for user: ${forename}</p>
+            <p>Change password for user: <b>${forename} ${surname}</b></p>
             <form action="setpassword.php" method="get">
                 
                 <input type="hidden" name="id" value="${id}" />

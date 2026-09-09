@@ -1319,6 +1319,68 @@ echo '
 
 
     //
+    // Return all of the data from the editor. By default this
+    // function returns all of the data but if you pass a row
+    // number (which starts at zero for the first row) then
+    // an array of just the data in that row will be returned.
+    //
+    // The data is returned by looking at the data-original
+    // attributes on each cell of the table.
+    //
+    // @param number id  OPTIONAL The id of the editor. This
+    //                            defaults to editor1.
+    // @param number row OPTIONAL If given then just the data for
+    //                            the given row number will be
+    //                            returned.
+    //
+    editor_getdata =
+    editor_objects["' . $this->id . '"].editor_getdata = function (id = "editor1", index = null)
+    {
+        var id    = id ?? "editor1";
+        var table = document.querySelector("div.editor-container-" + id + " div.editor table");
+        
+        if (!table) {
+            return null;
+        }
+        
+        var trs   = table.querySelectorAll("tbody tr");
+        var data  = [];
+        var count = typeof index === "number" ? 1 : trs.length;
+
+        // Loop through all of the tr objects getting each rows
+        // data from the data-original attributes
+        for (var i=0; i<trs.length; ++i) {
+
+            if (typeof index !== "number" || i === index) {
+
+                var tds = trs[i].querySelectorAll("td");
+                var row = [];
+
+                for (var j=0; j<tds.length; ++j) {
+                    if (tds[j].hasAttribute("data-original")) {
+                        row.push(tds[j].getAttribute("data-original"));
+                    }
+                }
+            }
+        
+            if (typeof index === "number" && index === i) {
+                return row;
+            } else {
+                data.push(row);
+            }
+        }
+
+        return data;
+    };
+
+
+
+
+
+
+
+
+    //
     // Returns true/false as to whether a variable is null or
     // like null (NaN or undefined)
     //
@@ -2068,7 +2130,7 @@ echo '
 
         // Show the inputs in a ModalDialog
         editor_objects["' . $this->id . '"].editor_modal.show(html, {
-            hideOnBackground: true,
+            hideOnBackground: false,
             className: "editor-edit-row-popup"
         });
 
@@ -2585,7 +2647,7 @@ Are you sure that you want to <b>delete</b> the selected row(s)?<br />
     <button type="button" id="editor-deleterowsmodal-cancel" onclick="editor_modal.hide()">Cancel</button>
     <button type="button" id="editor-deleterowsmodal-ok" onclick="document.forms[\'editor_delete_form_\' + editor_confirmdeleterows.id].submit();">OK</button>
 </p>
-`);
+`, {hideOnBackground: false});
 
         document.getElementById(`editor-deleterowsmodal-cancel`).style.minHeight = ``;
         document.getElementById(`editor-deleterowsmodal-ok`).focus();
@@ -2610,7 +2672,7 @@ Are you sure that you want to add a new row?<br />
 <p style="float: right; margin-bottom: 0">
     <button type="button" id="editor-addrowmodal-cancel" onclick="editor_modal.hide()">Cancel</button>
     <button type="button" id="editor-addrowmodal-ok" onclick="editor_objects[editor_confirmaddnewrow.id].editor_addbuttonredirect(editor_confirmaddnewrow.id);">OK</button>
-</p>`);
+</p>`, {hideOnBackground: false,});
                                 document.getElementById(`editor-modaldialog-dialog`).style.minHeight = ``;
                                 document.getElementById(`editor-addrowmodal-ok`).focus();
                                 
