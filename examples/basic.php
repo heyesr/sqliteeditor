@@ -1,6 +1,7 @@
 <?php
     require('../common.php');
-    
+
+
     $sqle = new SQLiteEditorDownload();
     
     $sqle->header();
@@ -14,8 +15,9 @@
     // page  before any output is sent to the browser.
 
     $editor = new SQLiteEditor([
-        'filename' => './sqliteeditor.db',
-        'table'    => 'accounts'
+        'filename' => 'sqliteeditor.db',
+        'table'    => 'accounts',
+        'checkboxes_radio' => true
     ]);
     
     $editor->draw();

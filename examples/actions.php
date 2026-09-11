@@ -79,7 +79,7 @@
             'id' => 50
         ],
         'sql_delete' => false,
-        'sql_add' => false,
+        'sql_insert' => false,
         'checkboxes' => true,
         'actions' => [
             '<button type="button" onclick="alert(editor_getchecked(`editor2`))">An example showing the editor_getchecked() usage</button>'

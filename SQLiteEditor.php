@@ -127,7 +127,7 @@
                 'primary_key'                       => null,
                 'sql_select'                        => "SELECT * FROM {table} WHERE {where} {order}",
                 'sql_insert'                        => null, // This gets built based on the table structure
-                'sql_delete'                        => "DELETE FROM {table} WHERE {primary_key} IN({ids}) LIMIT {COUnt}",
+                'sql_delete'                        => "DELETE FROM {table} WHERE {primary_key} IN({ids}) LIMIT {count}",
                 'sql_update'                        => "UPDATE {table} SET {column} = {value} WHERE {primary_key} = {id}",
                 'editable'                          => [],
                 'editable_save_url'                 => null,
@@ -293,7 +293,7 @@
             //
             // Allow the use of * in the various properties
             //
-            foreach (['columns_widths','editable_types','editable','search_columns', 'ordering_include', 'ordering_exclude','columns_callbacks','columns_escape'] as $column) {
+            foreach (['columns_tooltips', 'columns_widths','editable_types','editable','search_columns', 'ordering_include', 'ordering_exclude','columns_callbacks','columns_escape'] as $column) {
 
                 if (is_array($this->options[$column])) {
                     foreach ($this->options[$column] as $k => $v) {
@@ -388,12 +388,12 @@
                                 $sql = str_ireplace('{value}', "'" . SQLite3::escapeString(is_array($v) ? implode(',', $v): $v) . "'", $sql);
                                 $sql = str_ireplace('{id}', (is_integer($_POST['editor_primary_key_value']) OR is_numeric($_POST['editor_primary_key_value'])) ? intval($_POST['editor_primary_key_value']) : "'" . SQLite3::escapeString($_POST['editor_primary_key_value']) . "'", $sql);
                                 $sql = str_ireplace('{primary_key}',$_POST['editor_primary_key_column'], $sql);
-        
+
         
                                 // Run the SQL query to update the
                                 // database.
                                 $this->sqlite->enableExceptions(true);
-                                
+
                                 try {
                                     $result = $this->sqlite->query($sql);
                                 } catch (Exception $e) {
@@ -1648,8 +1648,16 @@ echo '
 
 
 
-    editor_objects["' . $this->id . '"].editor_setpage = function (id, page)
+    editor_objects["' . $this->id . '"].editor_setpage = function (id = "editor1", page = 1)
     {
+        if (!id) {
+            id = "editor1";
+        }
+
+        if (!page) {
+            page = 1;
+        }
+
         var searchParams = new URLSearchParams(window.location.search);
             searchParams.delete("editor-paging-" + id);
             searchParams.set("editor-paging-" + id, Number(page));
@@ -2255,6 +2263,30 @@ echo '
 
 
     //
+    // This function facilitates deselecting a row.
+    //
+    // @param object tr The row to deselect.
+    //
+    editor_deselectrow = function (tr)
+    {
+        var checkbox = tr.querySelector("input[type=checkbox]");
+        var radio    = tr.querySelector("input[type=radio]");
+        
+        if (checkbox) {
+            checkbox.checked = false;
+        } else if (radio) {
+            radio.checked = false;
+        }
+    };
+
+
+
+
+
+
+
+
+    //
     // This function toggles the selection of a row.
     //
     // ** Doesnt need the prefix **
@@ -2271,6 +2303,33 @@ echo '
         } else if (radio) {
             radio.checked = !radio.checked;
         }
+    };
+
+
+
+
+
+
+
+
+    //
+    // This function returns true or false as to whether a row is
+    // selected or not.
+    //
+    // ** Doesnt need the prefix **
+    //
+    // @param object tr The row to query
+    //
+    editor_isselected = function (tr)
+    {
+        var checkbox = tr.querySelector("input[type=checkbox]");
+        var radio    = tr.querySelector("input[type=radio]");
+
+        if ( (checkbox && checkbox.checked) || (radio && radio.checked)) {
+            return true;
+        }
+        
+        return false;
     };
 
 
@@ -2639,13 +2698,31 @@ echo '
         // instead of making a global
         // variable.
         editor_confirmdeleterows.id = id;
+        
+        //
+        // Dont do anything if no rows are checked
+        //
+        var selected = editor_getchecked();
+        if (selected.length < 1) {
+            editor_modal.show(`
+No rows were selected!<br />
+
+
+<p style="float: right; margin-bottom: 0">
+    <button type="button" style="font-size: 120%; cursor: pointer" onclick="editor_modal.hide()">OK</button>
+</p>
+            `);
+            
+            return false;
+        }
+        
 
         editor_modal.show(`
 Are you sure that you want to <b>delete</b> the selected row(s)?<br />
 
 <p style="float: right; margin-bottom: 0">
-    <button type="button" id="editor-deleterowsmodal-cancel" onclick="editor_modal.hide()">Cancel</button>
     <button type="button" id="editor-deleterowsmodal-ok" onclick="document.forms[\'editor_delete_form_\' + editor_confirmdeleterows.id].submit();">OK</button>
+    <button type="button" id="editor-deleterowsmodal-cancel" onclick="editor_modal.hide()">Cancel</button>
 </p>
 `, {hideOnBackground: false});
 
@@ -2670,8 +2747,8 @@ Are you sure that you want to <b>delete</b> the selected row(s)?<br />
 Are you sure that you want to add a new row?<br />
 
 <p style="float: right; margin-bottom: 0">
-    <button type="button" id="editor-addrowmodal-cancel" onclick="editor_modal.hide()">Cancel</button>
     <button type="button" id="editor-addrowmodal-ok" onclick="editor_objects[editor_confirmaddnewrow.id].editor_addbuttonredirect(editor_confirmaddnewrow.id);">OK</button>
+    <button type="button" id="editor-addrowmodal-cancel" onclick="editor_modal.hide()">Cancel</button>
 </p>`, {hideOnBackground: false,});
                                 document.getElementById(`editor-modaldialog-dialog`).style.minHeight = ``;
                                 document.getElementById(`editor-addrowmodal-ok`).focus();

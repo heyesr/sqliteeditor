@@ -12,7 +12,7 @@
 </p>
 
 <script>
-    function getUsernames ()
+    function getFruits ()
     {
         return ['kiwi','mango','melon'];
     }
@@ -35,7 +35,7 @@
             'surname'  => 'Surname'
         ],
         'columns_widths' => [
-            'id' => 50,
+            'id' => 75,
             '*' => 250
         ],
         'editable'  => [
@@ -46,9 +46,9 @@
         ],
         'editable_types_checkbox_options' => [
             //'username' => "sql:SELECT username FROM accounts"
-            //'username' => 'function:getUsernames'
-            'username' => ['Apple::apple','orange','Banana (best fruit ever?)::banana']
-            //'username' => 'apple,orange,banana,pomegranite,kiwi'
+            //'username' => 'function:getFruits'
+            //'username' => ['Apple::apple','orange','Banana (best fruit ever?)::banana']
+            'username' => 'apple,orange,banana,pomegranite,kiwi'
         ]
     ]);
     
