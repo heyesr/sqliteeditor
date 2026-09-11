@@ -4,7 +4,7 @@
     $sqle = new SQLiteEditorDownload();
     
     $sqle->header();
-    $sqle->heading('An editable demo using an HTML5 date input');
+    $sqle->heading('An editable demo using a date input');
 ?>
 
 
